@@ -28,7 +28,7 @@ abstract class AbstractTable(
 		initColumns()
 		
 		mapSize = size * maxEntries
-		val file = RandomAccessFile("${name}.datalayered", "rw")
+		val file = RandomAccessFile("${name}${Datalayered.FILE_EXTENSION}", "rw")
 		mapAddress = OS.map(file.channel, FileChannel.MapMode.READ_WRITE, 0, mapSize)//OS.memory().allocate(mapSize)
 		
 		defaultKey = newKey(true)
