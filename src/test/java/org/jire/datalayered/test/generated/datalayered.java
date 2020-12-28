@@ -1,4 +1,4 @@
-package org.jire.datalayered.generated;
+package org.jire.datalayered.test.generated;
 
 import org.jire.datalayered.AbstractDatabase;
 

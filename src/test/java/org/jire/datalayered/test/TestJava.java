@@ -1,7 +1,7 @@
-package org.jire.datalayered;
+package org.jire.datalayered.test;
 
-import org.jire.datalayered.generated.datalayered;
-import org.jire.datalayered.generated.datalayered_members;
+import org.jire.datalayered.test.generated.datalayered;
+import org.jire.datalayered.test.generated.datalayered_members;
 
 public final class TestJava {
 	
@@ -10,6 +10,7 @@ public final class TestJava {
 		datalayered.init();
 		
 		datalayered_members members = datalayered.members;
+		System.out.println("bro " + members.getSize() + " / " + members.getMapSize());
 		System.out.println("default UID " + members.uid.get(members.getDefaultKey()));
 		
 		long member1 = members.newKey();

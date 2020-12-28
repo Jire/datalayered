@@ -1,6 +1,6 @@
 package org.jire.datalayered.test
 
-import org.jire.datalayered.generated.datalayered
+import org.jire.datalayered.test.generated.*
 
 object Test {
 	
