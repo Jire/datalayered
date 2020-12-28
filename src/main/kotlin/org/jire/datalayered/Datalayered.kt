@@ -32,7 +32,8 @@ interface Datalayered {
 		fun nativeColumnClass(tableName: String, type: KClass<*>): Pair<String, String> {
 			val simpleName = type.simpleName!!
 			val abstract = classToAbstract[type.superclasses[0]] ?: throw UnsupportedOperationException("$type")
-			val name = simpleName
+			val annotation = type.annotations.firstOrNull { it.annotationClass == DatalayeredName::class }
+			val name = (annotation as? DatalayeredName)?.name ?: simpleName
 			
 			val className = "$simpleName$\$DATALAYERED_COLUMN"
 			var string =
@@ -45,7 +46,8 @@ interface Datalayered {
 		fun nativeTableClass(databaseName: String, type: KClass<*>): Pair<String, String> {
 			val simpleName = type.simpleName!!
 			val className = "$simpleName$\$DATALAYERED_TABLE"
-			val name = simpleName
+			val annotation = type.annotations.firstOrNull { it.annotationClass == DatalayeredName::class }
+			val name = (annotation as? DatalayeredName)?.name ?: simpleName
 			
 			var initColumns = "public void initColumns() {\t\t"
 			
@@ -73,9 +75,9 @@ interface Datalayered {
 		}
 		
 		fun <T : Database> nativeDatabaseClass(type: KClass<T>): Pair<String, String> {
+			val simpleName =  type.simpleName!!
 			val annotation = type.annotations.firstOrNull { it.annotationClass == DatalayeredName::class }
-			val simpleName = type.simpleName!!
-			val name = simpleName.toLowerCase()
+			val name = (annotation as? DatalayeredName)?.name ?: simpleName.toLowerCase()
 			val className = "$simpleName$\$DATALAYERED_DATABASE"
 			var string = """package org.jire.datalayered.generated;
 			
