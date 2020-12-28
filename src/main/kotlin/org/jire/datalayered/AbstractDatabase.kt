@@ -1,5 +1,3 @@
 package org.jire.datalayered
 
-abstract class AbstractDatabase(override val name: String) : Database {
-
-}
+abstract class AbstractDatabase(override val name: String) : Database

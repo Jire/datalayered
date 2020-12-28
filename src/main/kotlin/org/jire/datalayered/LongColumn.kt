@@ -4,6 +4,8 @@ import net.openhft.chronicle.core.OS
 
 interface LongColumn : Column {
 	
+	override fun implementedType() = AbstractLongColumn::class
+	
 	val default: Long
 	
 	override fun writeDefault(address: Long) = set(address, default)

@@ -1,6 +1,6 @@
 package org.jire.datalayered
 
-interface Column {
+interface Column : Datalayered {
 	
 	val size: Int
 	val name: String

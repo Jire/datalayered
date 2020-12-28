@@ -1,6 +1,8 @@
 package org.jire.datalayered
 
-interface Table {
+interface Table : Datalayered {
+	
+	override fun implementedType() = AbstractTable::class
 	
 	val database: Database
 	
