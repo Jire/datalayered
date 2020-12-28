@@ -2,7 +2,6 @@ package org.jire.datalayered
 
 import net.openhft.chronicle.core.OS
 import java.io.RandomAccessFile
-import java.lang.UnsupportedOperationException
 import java.nio.channels.FileChannel
 
 abstract class AbstractTable(
@@ -51,6 +50,11 @@ abstract class AbstractTable(
 	override fun freeKey(key: Long) {
 		//OS.memory().freeMemory(key, size)
 		throw UnsupportedOperationException("$key")
+	}
+	
+	override fun free() {
+		//OS.memory().freeMemory(mapAddress, mapSize)
+		OS.unmap(mapAddress, mapSize)
 	}
 	
 }

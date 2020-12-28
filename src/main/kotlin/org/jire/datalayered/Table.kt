@@ -25,4 +25,6 @@ interface Table {
 	
 	fun freeKey(key: Long)
 	
+	fun free()
+	
 }
