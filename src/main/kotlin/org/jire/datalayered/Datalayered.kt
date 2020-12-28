@@ -29,21 +29,23 @@ interface Datalayered {
 		
 		val classToGenerated: Object2ObjectMap<KClass<*>, Class<*>> = Object2ObjectOpenHashMap()
 		
-		fun nativeColumnClass(type: KClass<*>): Pair<String, String> {
-			val simpleName = type.simpleName
+		fun nativeColumnClass(tableName: String, type: KClass<*>): Pair<String, String> {
+			val simpleName = type.simpleName!!
 			val abstract = classToAbstract[type.superclasses[0]] ?: throw UnsupportedOperationException("$type")
+			val name = simpleName
 			
 			val className = "$simpleName$\$DATALAYERED_COLUMN"
 			var string =
 				"\n\t\tpublic static final class $className extends ${abstract.qualifiedName} implements ${type.qualifiedName} {\n\t\t\t"
 			string += "public $className(org.jire.datalayered.Table table) {\n\t\t\t\t"
-			string += "super(\"points\", table);\n\t\t\t}\n\t\t}\n"
+			string += "super(\"$name\", table);\n\t\t\t}\n\t\t}\n"
 			return className to string
 		}
 		
-		fun nativeTableClass(type: KClass<*>): Pair<String, String> {
-			val simpleName = type.simpleName
+		fun nativeTableClass(databaseName: String, type: KClass<*>): Pair<String, String> {
+			val simpleName = type.simpleName!!
 			val className = "$simpleName$\$DATALAYERED_TABLE"
+			val name = simpleName
 			
 			var initColumns = "public void initColumns() {\t\t"
 			
@@ -58,27 +60,29 @@ interface Datalayered {
 				}
 				val memberName = member.name
 				val memberTypeName = memberType.qualifiedName
-				val columnCode = nativeColumnClass(memberType)
+				val columnCode = nativeColumnClass(name, memberType)
 				string += columnCode.second
 				string += "\n\t\tpublic final $memberTypeName $memberName = new ${columnCode.first}(this);\n\n"
 				string += "\n\t\t@Override public $memberTypeName get${memberName.capitalize()}() { return $memberName; }\n\n"
 				initColumns += "\n\t\t\t$memberName.init();"
 			}
 			string += "\t\tpublic $className(org.jire.datalayered.Database database) {\n\t\t\t" +
-					"super(database, \"members\", 10000);\n\t\t}"
+					"super(database, \"$name\", 10000);\n\t\t}"
 			string += "\n\n\t\t$initColumns\n\t\t}\n\n\t}"
 			return className to string
 		}
 		
 		fun <T : Database> nativeDatabaseClass(type: KClass<T>): Pair<String, String> {
-			val simpleName = type.simpleName
+			val annotation = type.annotations.firstOrNull { it.annotationClass == DatalayeredName::class }
+			val simpleName = type.simpleName!!
+			val name = simpleName.toLowerCase()
 			val className = "$simpleName$\$DATALAYERED_DATABASE"
 			var string = """package org.jire.datalayered.generated;
 			
 public final class $className extends org.jire.datalayered.AbstractDatabase implements ${type.qualifiedName} {
 			
 	public $className() {
-		super("datalayered");
+		super("$name");
 	}
 """
 			var declareMembers = ""
@@ -92,8 +96,7 @@ public final class $className extends org.jire.datalayered.AbstractDatabase impl
 				if (!memberType.isSubclassOf(Table::class)) {
 					throw UnsupportedOperationException("")
 				}
-				val memberTypeName = memberType.simpleName
-				val (tableClassName, tableCode) = nativeTableClass(memberType)
+				val (tableClassName, tableCode) = nativeTableClass(name, memberType)
 				string += tableCode
 				declareMembers += "\tpublic final ${memberType.qualifiedName} $memberName = new $tableClassName(this);\n"
 				declareMembers += "\t@Override public ${memberType.qualifiedName} get${memberName.capitalize()}() { return $memberName; }\n"

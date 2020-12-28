@@ -2,8 +2,8 @@ package org.jire.datalayered.test
 
 import org.jire.datalayered.Database
 
-interface Main : Database {
+interface main : Database {
 
-	val members: MainMembers
+	val members: members
 
 }

@@ -6,7 +6,7 @@ object Test {
 	
 	@JvmStatic
 	fun main(args: Array<String>) {
-		val main = Datalayered(Main::class)
+		val main = Datalayered(main::class)
 		val members = main.members
 		
 		val key = members()
