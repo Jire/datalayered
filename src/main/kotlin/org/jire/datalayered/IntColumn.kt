@@ -4,8 +4,6 @@ import net.openhft.chronicle.core.OS
 
 interface IntColumn : Column {
 	
-	override fun implementedType() = AbstractIntColumn::class
-	
 	val default: Int
 	
 	override fun writeDefault(address: Long) = set(address, default)

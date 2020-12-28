@@ -10,14 +10,19 @@ import kotlin.reflect.jvm.jvmErasure
 
 interface Datalayered {
 	
-	fun implementedType(): KClass<*>
-
 	companion object {
 		const val FILE_EXTENSION = ".datalayered"
 		
 		val classToAbstract = mapOf(
+			ByteColumn::class to AbstractByteColumn::class,
+			ShortColumn::class to AbstractShortColumn::class,
 			IntColumn::class to AbstractIntColumn::class,
-			LongColumn::class to AbstractLongColumn::class
+			LongColumn::class to AbstractLongColumn::class,
+			FloatColumn::class to AbstractFloatColumn::class,
+			DoubleColumn::class to AbstractDoubleColumn::class,
+			CharColumn::class to AbstractCharColumn::class,
+			BooleanColumn::class to AbstractBooleanColumn::class,
+			PointerColumn::class to AbstractPointerColumn::class
 		)
 		
 		fun nativeColumnClass(type: KClass<*>): Pair<String, String> {
