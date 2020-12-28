@@ -1,5 +1,7 @@
 package org.jire.datalayered
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import net.openhft.compiler.CompilerUtils
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMembers
@@ -24,6 +26,8 @@ interface Datalayered {
 			BooleanColumn::class to AbstractBooleanColumn::class,
 			PointerColumn::class to AbstractPointerColumn::class
 		)
+		
+		val classToGenerated: Object2ObjectMap<KClass<*>, Class<*>> = Object2ObjectOpenHashMap()
 		
 		fun nativeColumnClass(type: KClass<*>): Pair<String, String> {
 			val simpleName = type.simpleName
@@ -99,12 +103,17 @@ public final class $className extends org.jire.datalayered.AbstractDatabase impl
 			return className to string
 		}
 		
+		@Suppress("UNCHECKED_CAST")
 		fun <T : Database> nativeClass(type: KClass<T>): Class<T> {
+			val cached = classToGenerated[type]
+			if (cached != null) return cached as Class<T>
+			
 			val classCode = nativeDatabaseClass(type)
-			@Suppress("UNCHECKED_CAST")
-			return CompilerUtils.CACHED_COMPILER.loadFromJava(
+			val newClass = CompilerUtils.CACHED_COMPILER.loadFromJava(
 				"org.jire.datalayered.generated.${classCode.first}", classCode.second
 			) as Class<T>
+			classToGenerated[type] = newClass
+			return newClass
 		}
 		
 		operator fun <T : Database> invoke(type: KClass<T>): T {
