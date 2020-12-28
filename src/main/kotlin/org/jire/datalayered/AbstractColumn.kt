@@ -9,8 +9,6 @@ abstract class AbstractColumn(
 	override val index = table.nextIndex
 	override val offset = table.size
 	
-	fun pointer(key: Long) = key + offset
-	
 	override fun init() {
 		table.size += size
 		table.nextIndex++

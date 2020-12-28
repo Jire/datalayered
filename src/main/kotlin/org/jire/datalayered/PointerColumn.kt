@@ -2,13 +2,11 @@ package org.jire.datalayered
 
 import net.openhft.chronicle.core.OS
 
-abstract class PointerColumn(
-	size: Int,
-	name: String, table: Table,
-	val default: Long
-) : AbstractColumn(size, name, table) {
+interface PointerColumn : Column {
 	
-	val allocSize = size.toLong()
+	val default: Long
+	
+	val allocSize get() = size.toLong()
 	
 	override fun writeDefault(address: Long) = set(address, default)
 	

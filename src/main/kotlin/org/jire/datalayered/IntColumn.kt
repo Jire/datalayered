@@ -2,12 +2,9 @@ package org.jire.datalayered
 
 import net.openhft.chronicle.core.OS
 
-abstract class IntColumn
-@JvmOverloads
-constructor(
-	name: String, table: Table,
-	val default: Int = 0
-) : AbstractColumn(4, name, table) {
+interface IntColumn : Column {
+	
+	val default: Int
 	
 	override fun writeDefault(address: Long) = set(address, default)
 	

@@ -9,6 +9,8 @@ interface Column {
 	val index: Int
 	val offset: Long
 	
+	fun pointer(key: Long) = key + offset
+	
 	fun writeDefault(address: Long)
 	
 	fun init()
